@@ -69,3 +69,27 @@ export const deleteTeacher = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const updateMeTeacher = async (req: Request, res: Response) => {
+  try {
+    const teacherId = (req as any).user.id; // Assuming user ID is the teacher ID for now
+    const { department, ...rest } = req.body;
+
+    const teacher = await Teacher.findOne({ userId: teacherId });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Optional: Prevent teachers from changing their department directly
+    if (department) {
+      return res.status(403).json({ message: 'Department cannot be updated directly through this endpoint.' });
+    }
+
+    Object.assign(teacher, rest);
+    await teacher.save();
+
+    res.json({ message: 'Teacher profile updated successfully', teacher: teacher });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
