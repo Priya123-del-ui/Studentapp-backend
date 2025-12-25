@@ -3,6 +3,7 @@ import authRouter from './auth/auth.route';
 import userRouter from './user/user.route';
 import studentRouter from './student/student.route';
 import teacherRouter from './teacher/teacher.route';
+import deviceRouter from './device/device.route';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/auth', authRouter);
 router.use('/user', userRouter);
 router.use('/students', studentRouter);
 router.use('/teachers', teacherRouter);
+router.use('/devices', deviceRouter);
 
 export default router;
