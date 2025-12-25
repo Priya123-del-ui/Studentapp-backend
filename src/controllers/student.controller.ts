@@ -13,7 +13,22 @@ export const createStudent = async (req: Request, res: Response) => {
 
 export const getStudents = async (req: Request, res: Response) => {
   try {
-    const students = await Student.find({});
+    const query: any = {};
+    const { rollNumber, department, batch } = req.query;
+
+    if (rollNumber) {
+      query.rollNumber = rollNumber;
+    }
+
+    if (department) {
+      query.department = department;
+    }
+
+    if (batch) {
+      query.batch = batch;
+    }
+
+    const students = await Student.find(query);
     res.json(students);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -36,11 +51,27 @@ export const getStudentById = async (req: Request, res: Response) => {
 export const updateStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const updatedStudent = await Student.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    if (!updatedStudent) {
+    const { enrollmentStatus, ...rest } = req.body;
+
+    const student = await Student.findById(id);
+    if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
-    res.json({ message: 'Student updated successfully', student: updatedStudent });
+
+    // Validate enrollmentStatus
+    if (enrollmentStatus && !['enrolled', 'graduated', 'dropped'].includes(enrollmentStatus)) {
+      return res.status(400).json({ message: 'Invalid enrollment status' });
+    }
+
+    // Update student fields
+    Object.assign(student, rest);
+    if (enrollmentStatus) {
+      student.enrollmentStatus = enrollmentStatus;
+    }
+
+    await student.save();
+
+    res.json({ message: 'Student updated successfully', student: student });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }

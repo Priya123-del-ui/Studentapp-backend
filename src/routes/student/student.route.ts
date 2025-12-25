@@ -57,6 +57,22 @@ router.post('/', protect, authorize('admin'), createStudent);
  *     tags: [Student]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: rollNumber
+ *         schema:
+ *           type: string
+ *         description: Search students by roll number
+ *       - in: query
+ *         name: department
+ *         schema:
+ *           type: string
+ *         description: Filter students by department
+ *       - in: query
+ *         name: batch
+ *         schema:
+ *           type: string
+ *         description: Filter students by batch
  *     responses:
  *       200:
  *         description: A list of students
