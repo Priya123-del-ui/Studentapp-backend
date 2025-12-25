@@ -7,6 +7,7 @@ export interface IUser extends Document {
   passwordResetToken?: string;
   passwordResetExpires?: number;
   refreshToken?: string;
+  profilePhoto?: string;
 }
 
 const userSchema: Schema = new Schema({
@@ -16,6 +17,7 @@ const userSchema: Schema = new Schema({
   passwordResetToken: { type: String },
   passwordResetExpires: { type: Date },
   refreshToken: { type: String },
+  profilePhoto: { type: String },
 });
 
 export default mongoose.model<IUser>('User', userSchema);

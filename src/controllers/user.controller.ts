@@ -29,3 +29,24 @@ export const updateMe = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const uploadProfilePhoto = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profilePhoto = `/uploads/${req.file.filename}`;
+    await user.save();
+
+    res.json({ message: 'Profile photo uploaded successfully', profilePhoto: user.profilePhoto });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
