@@ -58,11 +58,19 @@ export const loginUser = async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    res.json({ token });
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+    });
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+
+    res.json({ accessToken, refreshToken });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
@@ -121,6 +129,41 @@ export const resetPassword = async (req: Request, res: Response) => {
     await user.save();
 
     res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const user = await User.findOne({ refreshToken: token });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    jwt.verify(token, process.env.JWT_REFRESH_SECRET as string, (err: any, decoded: any) => {
+      if (err) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+
+      const payload = {
+        id: user.id,
+        role: user.role,
+      };
+
+      const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      });
+
+      res.json({ accessToken });
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }

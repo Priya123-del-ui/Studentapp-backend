@@ -6,6 +6,7 @@ export interface IUser extends Document {
   role: 'student' | 'teacher' | 'admin';
   passwordResetToken?: string;
   passwordResetExpires?: number;
+  refreshToken?: string;
 }
 
 const userSchema: Schema = new Schema({
@@ -14,6 +15,7 @@ const userSchema: Schema = new Schema({
   role: { type: String, required: true, enum: ['student', 'teacher', 'admin'] },
   passwordResetToken: { type: String },
   passwordResetExpires: { type: Date },
+  refreshToken: { type: String },
 });
 
 export default mongoose.model<IUser>('User', userSchema);

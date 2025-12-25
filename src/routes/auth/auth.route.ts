@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerUser, loginUser, requestPasswordReset, resetPassword } from '../../controllers/auth.controller';
+import { registerUser, loginUser, requestPasswordReset, resetPassword, refreshToken } from '../../controllers/auth.controller';
 
 const router = Router();
 
@@ -117,5 +117,32 @@ router.post('/request-password-reset', requestPasswordReset);
  *         description: Bad request
  */
 router.post('/reset-password', resetPassword);
+
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *   post:
+ *     summary: Refresh an access token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/refresh-token', refreshToken);
 
 export default router;
