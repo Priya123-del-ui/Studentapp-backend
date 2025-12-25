@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerUser } from '../../controllers/auth.controller';
+import { registerUser, loginUser } from '../../controllers/auth.controller';
 
 const router = Router();
 
@@ -34,5 +34,35 @@ const router = Router();
  *         description: Bad request
  */
 router.post('/register', registerUser);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/login', loginUser);
 
 export default router;
