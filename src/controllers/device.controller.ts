@@ -92,3 +92,25 @@ export const rejectDevice = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const revokeDevice = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const device = await Device.findById(id);
+
+    if (!device) {
+      return res.status(404).json({ message: 'Device not found' });
+    }
+
+    if (device.status !== 'approved') {
+      return res.status(400).json({ message: 'Device is not in approved status' });
+    }
+
+    device.status = 'revoked';
+    await device.save();
+
+    res.json({ message: 'Device revoked successfully', device });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

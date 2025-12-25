@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerDevice, approveDevice, rejectDevice } from '../../controllers/device.controller';
+import { registerDevice, approveDevice, rejectDevice, revokeDevice } from '../../controllers/device.controller';
 import { protect, authorize } from '../../middleware/auth.middleware';
 
 const router = Router();
@@ -91,5 +91,34 @@ router.put('/:id/approve', protect, authorize('admin'), approveDevice);
  *         description: Device is not pending
  */
 router.put('/:id/reject', protect, authorize('admin'), rejectDevice);
+
+/**
+ * @swagger
+ * /devices/{id}/revoke:
+ *   put:
+ *     summary: Revoke an approved device (Admin only)
+ *     tags: [Device]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The device ID
+ *     responses:
+ *       200:
+ *         description: Device revoked successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Device not found
+ *       400:
+ *         description: Device is not approved
+ */
+router.put('/:id/revoke', protect, authorize('admin'), revokeDevice);
 
 export default router;
