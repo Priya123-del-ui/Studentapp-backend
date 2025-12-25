@@ -90,6 +90,23 @@ router.post('/me/photo', protect, upload.single('profilePhoto'), uploadProfilePh
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search users by email (case-insensitive)
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [student, teacher, admin]
+ *         description: Filter users by role
+ *       - in: query
+ *         name: isActive
+ *         schema:
+ *           type: boolean
+ *         description: Filter users by active status
  *     responses:
  *       200:
  *         description: A list of users

@@ -53,7 +53,25 @@ export const uploadProfilePhoto = async (req: Request, res: Response) => {
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find({}).select('-password_hash -passwordResetToken -passwordResetExpires -refreshToken');
+    const { search, role, isActive } = req.query;
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { email: { $regex: search, $options: 'i' } },
+        // Add other searchable fields if needed, e.g., { name: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (role) {
+      query.role = role;
+    }
+
+    if (isActive !== undefined) {
+      query.isActive = isActive === 'true';
+    }
+
+    const users = await User.find(query).select('-password_hash -passwordResetToken -passwordResetExpires -refreshToken');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
