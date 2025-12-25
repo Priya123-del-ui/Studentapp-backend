@@ -126,3 +126,31 @@ export const deleteClass = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const getClassRoster = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const classItem = await Class.findById(id).populate('students', 'name rollNumber');
+
+    if (!classItem) {
+      return res.status(404).json({ message: 'Class not found' });
+    }
+
+    // Check if the authenticated user is an admin or the assigned teacher
+    const userRole = (req as any).user.role;
+    const userId = (req as any).user.id;
+
+    if (userRole === 'teacher') {
+      const teacher = await Teacher.findOne({ userId });
+      if (!teacher || teacher._id.toString() !== classItem.teacher.toString()) {
+        return res.status(403).json({ message: 'Not authorized to view this class roster' });
+      }
+    } else if (userRole !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized to view this class roster' });
+    }
+
+    res.json({ class: classItem.name, roster: classItem.students });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

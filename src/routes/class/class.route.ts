@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createClass, getClasses, getClassById, updateClass, deleteClass } from '../../controllers/class.controller';
+import { createClass, getClasses, getClassById, updateClass, deleteClass, getClassRoster } from '../../controllers/class.controller';
 import { protect, authorize } from '../../middleware/auth.middleware';
 
 const router = Router();
@@ -190,5 +190,32 @@ router.put('/:id', protect, authorize('admin'), updateClass);
  *         description: Class not found
  */
 router.delete('/:id', protect, authorize('admin'), deleteClass);
+
+/**
+ * @swagger
+ * /classes/{id}/roster:
+ *   get:
+ *     summary: Get class roster (Admin and Teacher only)
+ *     tags: [Class]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The class ID
+ *     responses:
+ *       200:
+ *         description: Class roster data
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Class not found
+ */
+router.get('/:id/roster', protect, authorize('admin', 'teacher'), getClassRoster);
 
 export default router;
