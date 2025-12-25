@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { getMe, updateMe, uploadProfilePhoto } from '../../controllers/user.controller';
-import { protect } from '../../middleware/auth.middleware';
-import upload from '../../config/multer'; // We will create this file
+import { getMe, updateMe, uploadProfilePhoto, getUsers } from '../../controllers/user.controller';
+import { protect, authorize } from '../../middleware/auth.middleware';
+import upload from '../../config/multer';
 
 const router = Router();
 
@@ -81,5 +81,23 @@ router.put('/me', protect, updateMe);
  *         description: Unauthorized
  */
 router.post('/me/photo', protect, upload.single('profilePhoto'), uploadProfilePhoto);
+
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Get all users (Admin only)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/', protect, authorize('admin'), getUsers);
 
 export default router;
