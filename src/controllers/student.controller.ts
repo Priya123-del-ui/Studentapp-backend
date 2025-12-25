@@ -58,3 +58,24 @@ export const deleteStudent = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const uploadStudentFaceData = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    student.faceData.push(`/uploads/${req.file.filename}`);
+    await student.save();
+
+    res.json({ message: 'Face data uploaded successfully', faceData: student.faceData });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { createStudent, getStudents, getStudentById, updateStudent, deleteStudent } from '../../controllers/student.controller';
+import { createStudent, getStudents, getStudentById, updateStudent, deleteStudent, uploadStudentFaceData } from '../../controllers/student.controller';
 import { protect, authorize } from '../../middleware/auth.middleware';
+import upload from '../../config/multer';
 
 const router = Router();
 
@@ -166,5 +167,44 @@ router.put('/:id', protect, authorize('admin'), updateStudent);
  *         description: Student not found
  */
 router.delete('/:id', protect, authorize('admin'), deleteStudent);
+
+/**
+ * @swagger
+ * /students/{id}/face-data:
+ *   post:
+ *     summary: Upload face data for a student (Admin only)
+ *     tags: [Student]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The student ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               faceImage:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Face data uploaded successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Student not found
+ */
+router.post('/:id/face-data', protect, authorize('admin'), upload.single('faceImage'), uploadStudentFaceData);
 
 export default router;
