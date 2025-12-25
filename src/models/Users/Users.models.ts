@@ -8,6 +8,7 @@ export interface IUser extends Document {
   passwordResetExpires?: number;
   refreshToken?: string;
   profilePhoto?: string;
+  isActive: boolean;
 }
 
 const userSchema: Schema = new Schema({
@@ -18,6 +19,7 @@ const userSchema: Schema = new Schema({
   passwordResetExpires: { type: Date },
   refreshToken: { type: String },
   profilePhoto: { type: String },
+  isActive: { type: Boolean, default: true },
 });
 
 export default mongoose.model<IUser>('User', userSchema);

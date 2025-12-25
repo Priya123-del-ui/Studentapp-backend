@@ -59,3 +59,21 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const deactivateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isActive = false;
+    await user.save();
+
+    res.json({ message: `User ${id} deactivated successfully` });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};

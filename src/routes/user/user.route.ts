@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getMe, updateMe, uploadProfilePhoto, getUsers } from '../../controllers/user.controller';
+import { getMe, updateMe, uploadProfilePhoto, getUsers, deactivateUser } from '../../controllers/user.controller';
 import { protect, authorize } from '../../middleware/auth.middleware';
 import upload from '../../config/multer';
 
@@ -99,5 +99,32 @@ router.post('/me/photo', protect, upload.single('profilePhoto'), uploadProfilePh
  *         description: Forbidden
  */
 router.get('/', protect, authorize('admin'), getUsers);
+
+/**
+ * @swagger
+ * /user/{id}/deactivate:
+ *   put:
+ *     summary: Deactivate a user (Admin only)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User deactivated successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+router.put('/:id/deactivate', protect, authorize('admin'), deactivateUser);
 
 export default router;
