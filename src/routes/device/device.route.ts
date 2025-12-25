@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { registerDevice } from '../../controllers/device.controller';
-import { protect } from '../../middleware/auth.middleware';
+import { registerDevice, approveDevice, rejectDevice } from '../../controllers/device.controller';
+import { protect, authorize } from '../../middleware/auth.middleware';
 
 const router = Router();
 
@@ -33,5 +33,63 @@ const router = Router();
  *         description: Unauthorized
  */
 router.post('/register', protect, registerDevice);
+
+/**
+ * @swagger
+ * /devices/{id}/approve:
+ *   put:
+ *     summary: Approve a pending device (Admin only)
+ *     tags: [Device]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The device ID
+ *     responses:
+ *       200:
+ *         description: Device approved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Device not found
+ *       400:
+ *         description: Device is not pending or teacher already has an approved device
+ */
+router.put('/:id/approve', protect, authorize('admin'), approveDevice);
+
+/**
+ * @swagger
+ * /devices/{id}/reject:
+ *   put:
+ *     summary: Reject a pending device (Admin only)
+ *     tags: [Device]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The device ID
+ *     responses:
+ *       200:
+ *         description: Device rejected successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Device not found
+ *       400:
+ *         description: Device is not pending
+ */
+router.put('/:id/reject', protect, authorize('admin'), rejectDevice);
 
 export default router;

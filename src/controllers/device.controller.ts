@@ -42,3 +42,53 @@ export const registerDevice = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const approveDevice = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const device = await Device.findById(id);
+
+    if (!device) {
+      return res.status(404).json({ message: 'Device not found' });
+    }
+
+    if (device.status !== 'pending') {
+      return res.status(400).json({ message: 'Device is not in pending status' });
+    }
+
+    // Check if the teacher already has an approved device
+    const approvedDevice = await Device.findOne({ teacherId: device.teacherId, status: 'approved' });
+    if (approvedDevice) {
+      return res.status(400).json({ message: 'Teacher already has an approved device. Revoke existing device to approve this one.' });
+    }
+
+    device.status = 'approved';
+    await device.save();
+
+    res.json({ message: 'Device approved successfully', device });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const rejectDevice = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const device = await Device.findById(id);
+
+    if (!device) {
+      return res.status(404).json({ message: 'Device not found' });
+    }
+
+    if (device.status !== 'pending') {
+      return res.status(400).json({ message: 'Device is not in pending status' });
+    }
+
+    device.status = 'rejected';
+    await device.save();
+
+    res.json({ message: 'Device rejected successfully', device });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
