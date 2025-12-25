@@ -113,6 +113,11 @@ router.get('/:id', protect, authorize('admin'), getTeacherById);
  *                 type: string
  *               department:
  *                 type: string
+ *               classesTaught:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: objectId
  *     responses:
  *       200:
  *         description: Teacher updated successfully
