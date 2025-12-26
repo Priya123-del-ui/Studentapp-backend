@@ -1,0 +1,35 @@
+Project Architecture Overview:
+
+The StudentApp backend follows a layered, service-oriented architecture designed for scalability, maintainability, and separation of concerns.
+
+1.  Layers:
+    -   **Routes:** Defines API endpoints and maps them to controller functions.
+    -   **Controllers:** Handles incoming HTTP requests, parses input, calls appropriate service methods, and sends HTTP responses. Controllers are kept thin, primarily focusing on request/response handling.
+    -   **Services:** Encapsulates the core business logic of the application. Services interact with models, perform validation, execute complex operations, and apply domain-specific rules. They are designed to be reusable and independent of the HTTP layer.
+    -   **Models:** Defines the structure of data (schemas) and provides an interface for interacting with the MongoDB database (using Mongoose). Each model represents a collection in the database.
+    -   **Middleware:** Functions that execute in the middle of the request-response cycle. Used for authentication (`protect`), authorization (`authorize`), error handling, and other request-level processing.
+
+2.  Key Components:
+    -   **Server Entry Point (`src/server.ts`):** Initializes the Express application, connects to the database, and starts the server.
+    -   **Express Application (`src/app.ts`):** Configures Express middleware, routes, and error handlers.
+    -   **Configuration (`src/config/`):** Manages application settings (database URIs, JWT secrets, port, etc.) loaded from environment variables.
+    -   **Database Connection (`src/config/database.ts`):** Handles the connection to MongoDB using Mongoose.
+    -   **Authentication (`src/services/AuthService.ts`, `src/controllers/auth.controller.ts`, `src/middleware/auth.middleware.ts`):** Manages user registration, login, token issuance, and protection of routes.
+    -   **Error Handling (`src/utils/appError.ts`, `src/middleware/errorMiddleware.ts`):** Provides a custom `AppError` class for operational errors and a global error handling middleware to catch and respond to errors consistently.
+    -   **Logging (`src/utils/logger.ts`):** Utilizes `winston` for structured logging across the application, with different levels and file rotation.
+    -   **Models (`src/models/`):** Contains Mongoose schemas for various entities like `User`, `Student`, `Teacher`, `Course`, `Enrollment`, `Device`.
+    -   **Services (`src/services/`):** Contains business logic for entities, e.g., `StudentService`, `EnrollmentService`, `DeviceService`.
+    -   **Routes (`src/routes/`):** Organizes API routes by feature (e.g., `auth.route.ts`, `user.route.ts`, `student.route.ts`, `device.route.ts`).
+    -   **Tests (`tests/`):** Includes contract tests (verifying API behavior) and integration tests (verifying user journeys).
+
+3.  Request Flow Example:
+    1.  A client sends an HTTP request to an API endpoint (e.g., `POST /api/auth/register`).
+    2.  The request is received by the Express application (`src/app.ts`).
+    3.  Middleware (e.g., JSON parser, authentication `protect`) processes the request.
+    4.  The request is routed to the appropriate controller function (`auth.controller.ts::registerUser`).
+    5.  The controller calls a service method (`AuthService::register`).
+    6.  The service performs business logic, interacts with the `User` model (Mongoose), handles validation, and logs events.
+    7.  The service returns data or throws an `AppError`.
+    8.  The controller formats the service's response (or caught error) into an HTTP response.
+    9.  The response is sent back to the client.
+    10. Any uncaught errors are handled by the global `errorMiddleware.ts`.

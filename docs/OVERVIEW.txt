@@ -1,0 +1,29 @@
+Project Title: StudentApp-backend
+
+Overview:
+This is the backend for a StudentApp, designed to manage student-related data, authentication, enrollment, and device management for attendance tracking. It provides a robust and scalable API built with Node.js, Express, and MongoDB (via Mongoose), utilizing TypeScript for type safety and maintainability.
+
+Key Features:
+- User Authentication: Secure registration, login, and token management (JWT).
+- User Profile Management: Allows authenticated users to view and update their profiles.
+- Student Management: CRUD operations for student records, including filtering.
+- Teacher Management: (Implicitly handled through User model roles).
+- Device Management: Registration, approval, rejection, revocation, and general management of devices used for attendance tracking (e.g., by teachers).
+- Enrollment Management: Functionality to enroll students in courses, retrieve enrollment details.
+- Role-Based Access Control (RBAC): Differentiates access based on user roles (student, teacher, admin).
+- Centralized Error Handling: Uses a custom AppError class and global error middleware for consistent error responses.
+- Logging: Integrated Winston logger for application insights and error tracking.
+- Database: MongoDB for data persistence.
+
+Technologies Used:
+- Node.js
+- Express.js
+- TypeScript
+- Mongoose (MongoDB ODM)
+- bcrypt (for password hashing)
+- jsonwebtoken (for JWT authentication)
+- winston (for logging)
+- supertest & Jest (for testing)
+- Swagger/OpenAPI (for API documentation - configured but not actively updated by this agent in this session)
+
+This project aims to provide a solid foundation for a comprehensive student management system.

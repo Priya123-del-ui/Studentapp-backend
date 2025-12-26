@@ -1,0 +1,100 @@
+API Endpoints Reference:
+
+This document summarizes the primary API endpoints available in the StudentApp backend.
+
+Base URL: /api (unless otherwise specified, or relative to server root for /user endpoints)
+
+---
+1.  Authentication Endpoints (/api/auth)
+    -   POST /api/auth/register
+        -   Description: Registers a new user with email, password, and role.
+        -   Access: Public
+        -   Request Body: { email: string, password: string, role: 'student' | 'teacher' | 'admin' }
+        -   Responses: 201 (User created), 400 (Bad request, user exists)
+    -   POST /api/auth/login
+        -   Description: Authenticates a user and returns access and refresh tokens.
+        -   Access: Public
+        -   Request Body: { email: string, password: string }
+        -   Responses: 200 (Login successful, returns tokens), 401 (Invalid credentials)
+    -   POST /api/auth/request-password-reset
+        -   Description: Initiates password reset process.
+        -   Access: Public
+    -   POST /api/auth/reset-password
+        -   Description: Resets user password using a token.
+        -   Access: Public
+    -   POST /api/auth/refresh-token
+        -   Description: Refreshes an expired access token using a refresh token.
+        -   Access: Public
+
+---
+2.  User Profile Endpoints (/user)
+    -   GET /user/me
+        -   Description: Retrieves the authenticated user's profile.
+        -   Access: Authenticated (protect)
+        -   Responses: 200 (User profile), 401 (Unauthorized)
+    -   PUT /user/me
+        -   Description: Updates the authenticated user's profile. Email and role cannot be updated directly via this endpoint.
+        -   Access: Authenticated (protect)
+        -   Request Body: { [field]: value } (e.g., { name: "John Doe" })
+        -   Responses: 200 (Profile updated), 400 (Bad request), 401 (Unauthorized), 403 (Forbidden for email/role)
+    -   POST /user/me/photo
+        -   Description: Uploads a profile photo for the authenticated user.
+        -   Access: Authenticated (protect)
+        -   Request Body: multipart/form-data with 'profilePhoto' field
+    -   GET /user
+        -   Description: Get all users.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+        -   Query Params: search, role, isActive
+    -   PUT /user/{id}/deactivate
+        -   Description: Deactivates a user.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+
+---
+3.  Student Endpoints (/students)
+    -   POST /students
+        -   Description: Create a new student.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   GET /students
+        -   Description: Get all students, with optional filters.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   GET /students/{id}
+        -   Description: Get a student by ID.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   PUT /students/{id}
+        -   Description: Update a student by ID.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   DELETE /students/{id}
+        -   Description: Delete a student by ID.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   POST /students/{id}/face-data
+        -   Description: Upload face data for a student.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+
+---
+4.  Device Endpoints (/devices)
+    -   POST /devices/register
+        -   Description: A teacher registers a new device for attendance tracking.
+        -   Access: Authenticated (protect), Teacher only (implicitly by teacherId association)
+        -   Request Body: { fingerprint: string }
+        -   Responses: 201 (Device registered), 400 (Bad request, device exists, teacher has approved device)
+    -   GET /devices
+        -   Description: Get all registered devices.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   GET /devices/{id}
+        -   Description: Get a device by ID.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   PUT /devices/{id}
+        -   Description: Update device information (general fields).
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   DELETE /devices/{id}
+        -   Description: Delete a device.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   PUT /devices/{id}/approve
+        -   Description: Admin approves a pending device.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   PUT /devices/{id}/reject
+        -   Description: Admin rejects a pending device.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
+    -   PUT /devices/{id}/revoke
+        -   Description: Admin revokes an approved device.
+        -   Access: Authenticated (protect), Admin only (authorize('admin'))
