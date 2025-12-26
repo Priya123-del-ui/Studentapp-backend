@@ -10,6 +10,10 @@ yarn-error.log*
 
 .vscode/*
 .env
-.idea
-.gemini
-.specify
+.gemini/
+.idea/*
+.idea/compiler.xml
+.idea/copilot.data.migration.agent.xml
+.idea/copilot.data.migration.ask.xml
+.idea/copilot.data.migration.edit.xml
+.specify/
