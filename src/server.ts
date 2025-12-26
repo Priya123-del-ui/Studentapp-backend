@@ -6,6 +6,7 @@ import { connectDB } from './config/database';
 import { swaggerSpec } from './config/swagger';
 import apiRouter from './routes';
 import errorHandler from './middleware/errorMiddleware';
+import logger from './utils/logger'; // Import the logger utility
 
 const app = express();
 const httpServer = createServer(app);
@@ -28,15 +29,15 @@ app.use('/api', apiRouter);
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+  logger.info(`A user connected: ${socket.id}`);
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    logger.info(`User disconnected: ${socket.id}`);
   });
 
   // Example: Echo message back to the client
   socket.on('message', (message) => {
-    console.log('Received message:', message);
+    logger.info(`Received message: ${message}`);
     socket.emit('message', `Server received: ${message}`);
   });
 });
@@ -48,7 +49,7 @@ const PORT = process.env.PORT || 3000;
 httpServer.listen(
     PORT,
     () => {
-        console.log(`server started on port: ${PORT}` );
+        logger.info(`Server started on port: ${PORT}`);
         connectDB();
     }
 );

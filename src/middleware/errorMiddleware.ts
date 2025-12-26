@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
+import logger from '../utils/logger'; // Import the logger utility
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
@@ -23,7 +24,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
       // Programming or other unknown error: don't leak error details
     } else {
       // 1) Log error
-      console.error('ERROR 💥', err);
+      logger.error('ERROR 💥', err); // Use logger.error instead of console.error
 
       // 2) Send generic message
       res.status(500).json({
