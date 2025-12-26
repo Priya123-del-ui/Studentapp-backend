@@ -7,7 +7,7 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test jest --detectOpenHandles",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
     "migrate:create": "migrate-mongo create",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.6",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
     "eslint": "^9.39.2",
@@ -36,6 +37,7 @@
     "migrate-mongo": "^14.0.7",
     "nodemon": "^3.1.11",
     "prettier": "^3.7.4",
+    "supertest": "^7.1.4",
     "typescript": "^5.3.3"
   }
 }

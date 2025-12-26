@@ -55,4 +55,6 @@ httpServer.listen(
         logger.info(`Server started on port: ${PORT}`);
         connectDB();
     }
-);
+    );
+
+export default app; // Export the app instance for testing
