@@ -1,0 +1,21 @@
+# Ignore artifacts:
+dist
+build
+.next
+.turbo
+coverage
+
+# Ignore Node.js modules
+node_modules
+
+# Ignore generated files:
+*.log
+*.lock
+
+# Ignore dotfiles
+.env
+.idea
+.vscode
+.git
+.gemini
+.specify

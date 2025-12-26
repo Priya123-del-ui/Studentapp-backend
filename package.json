@@ -1,33 +1,32 @@
 {
-  "name": "Studentapp-backend",
-  "version": "0.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "name": "studentapp-backend-express",
+  "version": "1.0.0",
+  "description": "A basic Express.js application for T002 (TypeScript)",
+  "main": "dist/app.js",
   "scripts": {
     "build": "tsc",
-    "dev": "node --watch --env-file=.env --import=tsx src/server.ts"
+    "start": "node dist/app.js",
+    "dev": "nodemon src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"**/*.{js,ts,json,md}\""
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.0.3",
-    "bcrypt": "^6.0.0",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.0.2",
-    "multer": "^2.0.2",
-    "nodemailer": "^7.0.12",
-    "socket.io": "^4.8.3",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "tsx": "^4.21.0"
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.0.0",
-    "@types/nodemailer": "^7.0.4",
-    "@types/socket.io": "^3.0.1",
-    "typescript": "^5.5.3"
-  },
-  "private": true
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.6",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.7.4",
+    "typescript": "^5.3.3"
+  }
 }
