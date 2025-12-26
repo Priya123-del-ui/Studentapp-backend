@@ -5,6 +5,9 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import User from '../models/Users/Users.models';
 import config from '../config/config'; // Import the config utility
+import AuthService from '../services/AuthService'; // Import AuthService
+
+const authService = new AuthService(); // Create an instance of AuthService
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -14,25 +17,11 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
+    const result = await authService.register({ email, password, role }); // Use authService.register
 
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
-
-    const newUser = new User({
-      email,
-      password_hash,
-      role,
-    });
-
-    await newUser.save();
-
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(201).json({ message: result.message });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
@@ -44,36 +33,11 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    const { accessToken, refreshToken, message } = await authService.login({ email, password }); // Use authService.login
 
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const payload = {
-      id: user.id,
-      role: user.role,
-    };
-
-    const accessToken = jwt.sign(payload, config.JWT_SECRET, { // Use config.JWT_SECRET
-      expiresIn: config.JWT_EXPIRES_IN, // Use config.JWT_EXPIRES_IN
-    });
-
-    const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, { // Use config.JWT_REFRESH_SECRET
-      expiresIn: config.JWT_REFRESH_EXPIRES_IN, // Use config.JWT_REFRESH_EXPIRES_IN
-    });
-
-    user.refreshToken = refreshToken;
-    await user.save();
-
-
-    res.json({ accessToken, refreshToken });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.json({ accessToken, refreshToken, message });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 

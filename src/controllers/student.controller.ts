@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
-import Student from '../models/Student/Student.models';
+import StudentService from '../services/StudentService'; // Import StudentService
+import AppError from '../utils/appError'; // Import AppError
+
+const studentService = new StudentService(); // Create an instance of StudentService
 
 export const createStudent = async (req: Request, res: Response) => {
   try {
-    const newStudent = new Student(req.body);
-    await newStudent.save();
-    res.status(201).json({ message: 'Student created successfully', student: newStudent });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    const result = await studentService.createStudent(req.body);
+    res.status(201).json(result);
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
@@ -28,65 +30,40 @@ export const getStudents = async (req: Request, res: Response) => {
       query.batch = batch;
     }
 
-    const students = await Student.find(query);
+    const students = await studentService.getStudents(query);
     res.json(students);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
 export const getStudentById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const student = await Student.findById(id);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
+    const student = await studentService.getStudentById(id);
     res.json(student);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
 export const updateStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { enrollmentStatus, ...rest } = req.body;
-
-    const student = await Student.findById(id);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-
-    // Validate enrollmentStatus
-    if (enrollmentStatus && !['enrolled', 'graduated', 'dropped'].includes(enrollmentStatus)) {
-      return res.status(400).json({ message: 'Invalid enrollment status' });
-    }
-
-    // Update student fields
-    Object.assign(student, rest);
-    if (enrollmentStatus) {
-      student.enrollmentStatus = enrollmentStatus;
-    }
-
-    await student.save();
-
-    res.json({ message: 'Student updated successfully', student: student });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    const result = await studentService.updateStudent(id, req.body);
+    res.json(result);
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
 export const deleteStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const deletedStudent = await Student.findByIdAndDelete(id);
-    if (!deletedStudent) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-    res.json({ message: 'Student deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    const result = await studentService.deleteStudent(id);
+    res.json(result);
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error', error });
   }
 };
 
