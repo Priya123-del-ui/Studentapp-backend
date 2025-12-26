@@ -12,8 +12,8 @@ export interface IStudent extends Document {
 const studentSchema: Schema = new Schema({
   name: { type: String, required: true },
   rollNumber: { type: String, required: true, unique: true },
-  department: { type: String, required: true },
-  batch: { type: String, required: true },
+  department: { type: String, required: true, index: true },
+  batch: { type: String, required: true, index: true },
   enrollmentStatus: { type: String, required: true, enum: ['enrolled', 'graduated', 'dropped'], default: 'enrolled' },
   faceData: [{ type: String }], // Store image URLs or paths
 });

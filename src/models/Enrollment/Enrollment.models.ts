@@ -9,8 +9,8 @@ export interface IEnrollment extends Document {
 }
 
 const enrollmentSchema: Schema = new Schema({
-  student: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
-  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true },
+  student: { type: Schema.Types.ObjectId, ref: 'Student', required: true, index: true },
+  course: { type: Schema.Types.ObjectId, ref: 'Course', required: true, index: true },
   enrollmentDate: { type: Date, default: Date.now, required: true },
   grade: { type: String },
   status: { type: String, enum: ['enrolled', 'completed', 'dropped'], default: 'enrolled', required: true },

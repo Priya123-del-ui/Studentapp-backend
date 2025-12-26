@@ -15,9 +15,9 @@ const userSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   password_hash: { type: String, required: true },
   role: { type: String, required: true, enum: ['student', 'teacher', 'admin'] },
-  passwordResetToken: { type: String },
-  passwordResetExpires: { type: Date },
-  refreshToken: { type: String },
+  passwordResetToken: { type: String, index: true },
+  passwordResetExpires: { type: Date, index: true },
+  refreshToken: { type: String, index: true },
   profilePhoto: { type: String },
   isActive: { type: Boolean, default: true },
 });

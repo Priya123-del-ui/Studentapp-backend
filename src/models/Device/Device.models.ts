@@ -10,8 +10,8 @@ export interface IDevice extends Document {
 
 const deviceSchema: Schema = new Schema({
   fingerprint: { type: String, required: true, unique: true },
-  teacherId: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true },
-  status: { type: String, required: true, enum: ['pending', 'approved', 'rejected', 'revoked'], default: 'pending' },
+  teacherId: { type: Schema.Types.ObjectId, ref: 'Teacher', required: true, index: true },
+  status: { type: String, required: true, enum: ['pending', 'approved', 'rejected', 'revoked'], default: 'pending', index: true },
   registeredAt: { type: Date, default: Date.now },
   lastUsedAt: { type: Date },
 });
