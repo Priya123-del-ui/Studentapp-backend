@@ -1,3 +1,5 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 import express, { Request, Response, NextFunction } from 'express';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
@@ -7,12 +9,13 @@ import { swaggerSpec } from './config/swagger';
 import apiRouter from './routes';
 import errorHandler from './middleware/errorMiddleware';
 import logger from './utils/logger'; // Import the logger utility
+import config from './config/config'; // Import the config utility
 
 const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.WEBSOCKET_CORS_ORIGIN || '*', // Allow all origins for now, or specify
+    origin: config.WEBSOCKET_CORS_ORIGIN, // Use config.WEBSOCKET_CORS_ORIGIN
     methods: ['GET', 'POST'],
   },
 });
@@ -45,7 +48,7 @@ io.on('connection', (socket) => {
 // Global Error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
+const PORT = config.PORT; // Use config.PORT
 httpServer.listen(
     PORT,
     () => {

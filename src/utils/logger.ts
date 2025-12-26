@@ -1,6 +1,7 @@
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file'; // For daily rotating file logs
 import path from 'path';
+import config from '../config/config'; // Import the config utility
 
 const { combine, timestamp, printf, colorize } = format;
 
@@ -22,7 +23,7 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
 
 const logger = createLogger({
   levels: customLevels,
-  level: process.env.LOG_LEVEL || 'info', // Default log level
+  level: config.LOG_LEVEL, // Use config.LOG_LEVEL
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat
@@ -84,7 +85,7 @@ const logger = createLogger({
 
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-if (process.env.NODE_ENV !== 'production') {
+if (config.NODE_ENV !== 'production') { // Use config.NODE_ENV
   logger.add(new transports.Console({
     format: combine(
       colorize({ all: true }),

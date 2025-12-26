@@ -1,19 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import logger from '../utils/logger'; // Import the logger utility
+import config from '../config/config'; // Import the config utility
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === 'development') {
+  if (config.NODE_ENV === 'development') { // Use config.NODE_ENV
     res.status(err.statusCode).json({
       status: err.status,
       error: err,
       message: err.message,
       stack: err.stack,
     });
-  } else if (process.env.NODE_ENV === 'production') {
+  } else if (config.NODE_ENV === 'production') { // Use config.NODE_ENV
     // Operational, trusted error: send message to client
     if (err.isOperational) {
       res.status(err.statusCode).json({

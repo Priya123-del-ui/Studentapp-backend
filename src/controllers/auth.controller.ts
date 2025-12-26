@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import User from '../models/Users/Users.models';
+import config from '../config/config'; // Import the config utility
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -58,12 +59,12 @@ export const loginUser = async (req: Request, res: Response) => {
       role: user.role,
     };
 
-    const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+    const accessToken = jwt.sign(payload, config.JWT_SECRET, { // Use config.JWT_SECRET
+      expiresIn: config.JWT_EXPIRES_IN, // Use config.JWT_EXPIRES_IN
     });
 
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+    const refreshToken = jwt.sign(payload, config.JWT_REFRESH_SECRET, { // Use config.JWT_REFRESH_SECRET
+      expiresIn: config.JWT_REFRESH_EXPIRES_IN, // Use config.JWT_REFRESH_EXPIRES_IN
     });
 
     user.refreshToken = refreshToken;
@@ -95,8 +96,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     await user.save();
 
     // In a real app, you would send an email with the resetToken
-    console.log(`Password reset token for ${email}: ${resetToken}`);
-
+    // console.log(`Password reset token for ${email}: ${resetToken}`); // Replaced console.log with logger.info if logger was available here
     res.json({ message: 'Password reset email sent' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -148,7 +148,7 @@ export const refreshToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-    jwt.verify(token, process.env.JWT_REFRESH_SECRET as string, (err: any, decoded: any) => {
+    jwt.verify(token, config.JWT_REFRESH_SECRET, (err: any, decoded: any) => { // Use config.JWT_REFRESH_SECRET
       if (err) {
         return res.status(401).json({ message: 'Invalid token' });
       }
@@ -158,8 +158,8 @@ export const refreshToken = async (req: Request, res: Response) => {
         role: user.role,
       };
 
-      const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
+      const accessToken = jwt.sign(payload, config.JWT_SECRET, { // Use config.JWT_SECRET
+        expiresIn: config.JWT_EXPIRES_IN, // Use config.JWT_EXPIRES_IN
       });
 
       res.json({ accessToken });
