@@ -74,16 +74,9 @@ export const uploadStudentFaceData = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const student = await Student.findById(id);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-
-    student.faceData.push(`/uploads/${req.file.filename}`);
-    await student.save();
-
-    res.json({ message: 'Face data uploaded successfully', faceData: student.faceData });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    const result = await studentService.uploadFaceData(id, `/uploads/${req.file.filename}`);
+    res.json(result);
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({ message: 'Server error', error });
   }
 };

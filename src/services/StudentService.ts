@@ -69,6 +69,22 @@ class StudentService {
     return { message: 'Student deleted successfully' };
   }
 
+  async uploadFaceData(studentId: string, filePath: string): Promise<any> {
+    const student = await Student.findById(studentId);
+    if (!student) {
+      logger.warn(`Face data upload failed: Student with ID ${studentId} not found.`);
+      throw new AppError(`Student with ID ${studentId} not found.`, 404);
+    }
+
+    if (!student.faceData) {
+        student.faceData = []; // Initialize if not present
+    }
+    student.faceData.push(filePath);
+    await student.save();
+    logger.info(`Face data uploaded for student ${studentId}: ${filePath}`);
+    return { message: 'Face data uploaded successfully', faceData: student.faceData };
+  }
+
   async enrollStudent(studentId: string, courseId: string): Promise<any> {
     // TODO: Implement logic to enroll student in a course (requires Course model interaction)
     // For now, it's a placeholder

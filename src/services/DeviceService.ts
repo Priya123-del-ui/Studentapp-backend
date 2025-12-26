@@ -24,6 +24,13 @@ class DeviceService {
       throw new AppError(`Device with fingerprint ${fingerprint} already exists.`, 400);
     }
 
+    // Check if the teacher already has an approved device
+    const approvedDevice = await Device.findOne({ teacherId, status: 'approved' });
+    if (approvedDevice) {
+      logger.warn(`Device registration failed: Teacher ${teacherId} already has an approved device.`);
+      throw new AppError('Teacher already has an approved device. Revoke existing device to register a new one.', 400);
+    }
+
     const newDevice = new Device({
       fingerprint,
       teacherId,
