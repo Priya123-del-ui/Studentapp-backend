@@ -1,6 +1,8 @@
 require('dotenv').config(); // Load environment variables from .env file
 
 import express, { Request, Response, NextFunction } from 'express';
+import helmet from 'helmet'; // Import helmet
+import cors from 'cors'; // Import cors
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import swaggerUi from 'swagger-ui-express';
@@ -19,6 +21,12 @@ const io = new SocketIOServer(httpServer, {
     methods: ['GET', 'POST'],
   },
 });
+
+// Use Helmet middleware for security headers
+app.use(helmet());
+
+// Use CORS middleware for Express app
+app.use(cors({ origin: config.CORS_ORIGIN }));
 
 // Middleware
 app.use(express.json());

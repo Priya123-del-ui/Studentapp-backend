@@ -18,9 +18,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cors": "^2.8.19",
     "@types/winston": "^2.4.4",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
+    "helmet": "^8.1.0",
     "mongoose": "^9.0.2",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"

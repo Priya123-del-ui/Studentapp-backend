@@ -7,6 +7,7 @@ interface IConfig {
   JWT_REFRESH_SECRET: string;
   JWT_REFRESH_EXPIRES_IN: string;
   WEBSOCKET_CORS_ORIGIN: string;
+  CORS_ORIGIN: string; // Add CORS_ORIGIN to interface
   LOG_LEVEL: string;
   MONGODB_DB_NAME: string;
 }
@@ -21,6 +22,7 @@ const getConfig = (): IConfig => {
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'supersecretrefreshkey', // IMPORTANT: Change in production
     JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     WEBSOCKET_CORS_ORIGIN: process.env.WEBSOCKET_CORS_ORIGIN || '*',
+    CORS_ORIGIN: process.env.CORS_ORIGIN || '*', // Add CORS_ORIGIN here
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
     MONGODB_DB_NAME: process.env.MONGODB_DB_NAME || 'studentapp-backend',
   };
