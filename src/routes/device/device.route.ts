@@ -1,8 +1,18 @@
 import { Router } from 'express';
-import { registerDevice, approveDevice, rejectDevice, revokeDevice } from '../../controllers/device.controller';
+import { registerDevice, approveDevice, rejectDevice, revokeDevice, getDevices, getDeviceById, updateDevice, deleteDevice } from '../../controllers/device.controller';
 import { protect, authorize } from '../../middleware/auth.middleware';
 
 const router = Router();
+
+// Routes for all devices (Admin only)
+router.route('/')
+  .get(protect, authorize('admin'), getDevices); // Get all devices
+
+// Routes for specific device by ID (Admin only for GET, PUT, DELETE)
+router.route('/:id')
+  .get(protect, authorize('admin'), getDeviceById) // Get device by ID
+  .put(protect, authorize('admin'), updateDevice) // Update device by ID (general update)
+  .delete(protect, authorize('admin'), deleteDevice); // Delete device by ID
 
 /**
  * @swagger
@@ -32,7 +42,7 @@ const router = Router();
  *       401:
  *         description: Unauthorized
  */
-router.post('/register', protect, registerDevice);
+router.post('/register', protect, registerDevice); // Accessible by authenticated teachers
 
 /**
  * @swagger
@@ -122,3 +132,4 @@ router.put('/:id/reject', protect, authorize('admin'), rejectDevice);
 router.put('/:id/revoke', protect, authorize('admin'), revokeDevice);
 
 export default router;
+
